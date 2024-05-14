@@ -23,7 +23,7 @@ import Options.Applicative.Simple
       short,
       switch,
       simpleOptions,
-      simpleVersion )
+      simpleVersion, strOption, value )
 import qualified Paths_redka
 
 main :: IO ()
@@ -40,6 +40,11 @@ main = do
        <*> switch ( long "server"
                  <> short 's'
                  <> help "Server mode")
+       <*> strOption ( long "port"
+                 <> short 'p'
+                 <> value "6379"
+                 <> help "Port number"
+                  )
     )
     empty
   lo <- logOptionsHandle stderr (optionsVerbose options)

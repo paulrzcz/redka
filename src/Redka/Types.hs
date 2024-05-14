@@ -4,13 +4,14 @@ module Redka.Types
   , Options (..)
   ) where
 
-import RIO ( Bool, lens, HasLogFunc(..), LogFunc )
+import RIO ( String, Bool, lens, HasLogFunc(..), LogFunc )
 import RIO.Process ( HasProcessContext(..), ProcessContext )
 
 -- | Command line arguments
 data Options = Options
   { optionsVerbose :: !Bool
   , optionsServer  :: !Bool
+  , optionsPort    :: !String
   }
 
 data App = App

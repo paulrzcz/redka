@@ -27,8 +27,8 @@ library
   exposed-modules:
       Redka.Import
       Redka.Run
+      Redka.Server.Core
       Redka.Types
-      Redka.Util
   other-modules:
       Paths_redka
   autogen-modules:
@@ -38,6 +38,8 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.11 && <10
+    , bytestring
+    , network
     , redis-resp >=1.0.0
     , rio >=0.1.12.0
   default-language: Haskell2010
@@ -53,6 +55,8 @@ executable redka-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.11 && <10
+    , bytestring
+    , network
     , optparse-simple
     , redis-resp >=1.0.0
     , redka
@@ -72,7 +76,9 @@ test-suite redka-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.11 && <10
+    , bytestring
     , hspec
+    , network
     , redis-resp >=1.0.0
     , redka
     , rio >=0.1.12.0
