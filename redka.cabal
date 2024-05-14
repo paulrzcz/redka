@@ -25,10 +25,10 @@ source-repository head
 
 library
   exposed-modules:
-      Import
-      Run
-      Types
-      Util
+      Redka.Import
+      Redka.Run
+      Redka.Types
+      Redka.Util
   other-modules:
       Paths_redka
   autogen-modules:

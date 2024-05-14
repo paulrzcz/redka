@@ -1,8 +1,8 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Run (run) where
+module Redka.Run (run) where
 
-import Import
+import Redka.Import
 
 run :: RIO App ()
 run = do

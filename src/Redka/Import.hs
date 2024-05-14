@@ -1,9 +1,9 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module Import
+module Redka.Import
   ( module RIO
-  , module Types
+  , module Redka.Types
   ) where
 
 import RIO
-import Types
+import Redka.Types
 import Data.Redis

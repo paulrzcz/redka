@@ -2,7 +2,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main (main) where
 
-import Import
+import Redka.Import
     ( ($),
       Semigroup((<>)),
       IO,
@@ -14,7 +14,7 @@ import Import
       runRIO,
       App(App, appOptions, appLogFunc, appProcessContext),
       Options(Options, optionsVerbose) )
-import Run ( run )
+import Redka.Run ( run )
 import RIO.Process ( mkDefaultProcessContext )
 import Options.Applicative.Simple
     ( Alternative(empty),
@@ -30,7 +30,7 @@ main :: IO ()
 main = do
   (options, ()) <- simpleOptions
     $(simpleVersion Paths_redka.version)
-    "Header for command line arguments"
+    "Redka is a STM-powered dictionary with Redis protocol support"
     "Program description, also for command line arguments"
     (Options
        <$> switch ( long "verbose"

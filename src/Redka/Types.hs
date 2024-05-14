@@ -1,5 +1,5 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module Types
+module Redka.Types
   ( App (..)
   , Options (..)
   ) where
