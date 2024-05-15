@@ -12,8 +12,14 @@ import Redka.Import
     ( Int64, Word8, MonadIO(liftIO), ByteString, RIO, fromMaybe, STM )
 import qualified Data.ByteString as B
 import qualified StmContainers.Map as M
+import qualified StmContainers.Set as S
 
-data RedkaType = Nil | InString ByteString | InInteger Int64
+data RedkaType = Nil 
+    | InString ByteString 
+    | InInteger Int64
+    | InSet (S.Set ByteString)
+    | InZSet (S.Set ByteString)
+    | InHash (M.Map ByteString RedkaType)
 
 newtype EngineContext = EngineContext {
     storage :: M.Map ByteString RedkaType

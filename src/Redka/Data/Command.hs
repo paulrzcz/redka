@@ -3,8 +3,15 @@ module Redka.Data.Command (
 ) where
 
 import Redka.Import
-import Scanner
 import Redka.Data.Types (RespCommand, RespResponse)
+
+import qualified Data.Attoparsec.ByteString as P
+import Data.Attoparsec (Parser)
 
 parseCmd :: ByteString -> Either RespResponse [RespCommand]
 parseCmd = undefined
+
+--- Parser
+
+cmdParser :: Parser RespCommand
+cmdParser = undefined

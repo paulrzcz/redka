@@ -27,7 +27,7 @@ dependencies:
 - stm
 - stm-hamt
 - stm-containers
-- scanner
+- attoparsec >= 0.11
 
 ghc-options:
 - -Wall

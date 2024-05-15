@@ -6,11 +6,15 @@ where
 
 import Redka.Import
 import Redka.Data.Command (parseCmd)
+import Redka.Data.Types (RespResponse, RespCommand)
+import Redka.Data.Response (encodeResp)
 
 processMsg :: ByteString -> RIO App ByteString
 processMsg msg = do
     let cmds = parseCmd msg
-    return "nil"
+    resp <- processEitherCmds cmds
+    return $ encodeResp resp
 
--- parseInput :: ByteString -> Either Resp [Command]
--- parseInput msg = undefined
+processEitherCmds :: Either RespResponse [RespCommand] -> RIO App [RespResponse]
+processEitherCmds (Left resp) = pure [resp]
+processEitherCmds (Right cmds) = undefined
