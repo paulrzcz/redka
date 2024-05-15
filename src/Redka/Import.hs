@@ -6,4 +6,3 @@ module Redka.Import
 
 import RIO
 import Redka.Types
-import Data.Redis
