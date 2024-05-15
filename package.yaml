@@ -27,6 +27,7 @@ dependencies:
 - stm
 - stm-hamt
 - stm-containers
+- scanner
 
 ghc-options:
 - -Wall

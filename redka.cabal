@@ -46,6 +46,7 @@ library
     , bytestring
     , network
     , rio >=0.1.12.0
+    , scanner
     , stm
     , stm-containers
     , stm-hamt
@@ -67,6 +68,7 @@ executable redka-exe
     , optparse-simple
     , redka
     , rio >=0.1.12.0
+    , scanner
     , stm
     , stm-containers
     , stm-hamt
@@ -90,6 +92,7 @@ test-suite redka-test
     , network
     , redka
     , rio >=0.1.12.0
+    , scanner
     , stm
     , stm-containers
     , stm-hamt
