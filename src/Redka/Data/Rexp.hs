@@ -7,6 +7,8 @@ module Redka.Data.Rexp (
 ) where
 
 import Redka.Import
+import qualified Data.ByteString.Lazy as L
+import qualified Data.ByteString.Builder as B
 
 data RespExpr
   = RespString !ByteString
@@ -29,7 +31,11 @@ data RespExpr
 crlf :: ByteString
 crlf = "\r\n"
 
+
 encodeRexp :: RespExpr -> ByteString
 encodeRexp (RespString s) = "+" <> s
 encodeRexp (RespStringError s) = "-" <> s
-encodeRexp _ = "-NotImplemented"
+encodeRexp (RespInteger v) = ":" <> (L.toStrict . B.toLazyByteString . B.int64Dec) v
+encodeRexp RespNull = encodeRexp (RespString "nil")
+encodeRexp (RespBool v) = "#" <> if v then "t" else "f"
+encodeRexp _ = "-NotImplementedRexp"
