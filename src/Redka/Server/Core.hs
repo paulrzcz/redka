@@ -10,6 +10,7 @@ import Redka.Import
 import Network.Socket
 import Network.Socket.ByteString
 import Control.Concurrent (forkIO)
+import qualified Data.ByteString  as B
 
 type MessageReceiver = Socket -> IO ()
 
@@ -31,10 +32,12 @@ server shost sport = do
 
 handleConnection :: Socket -> RIO App ()
 handleConnection conn = do
-  msg <- liftIO $ recv conn 1024
-  logInfo $ "Received: " <> displayBytesUtf8 msg
-  liftIO $ sendAll conn msg
-  logInfo "Sent back"
+  msg <- liftIO $ recv conn 8192
+  unless (B.null msg) $ do
+    logInfo $ "Received: " <> displayBytesUtf8 msg
+    liftIO $ sendAll conn msg
+    logInfo "Sent back"
+    handleConnection conn
 
 resolve
     :: SocketType
