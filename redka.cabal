@@ -25,6 +25,8 @@ source-repository head
 
 library
   exposed-modules:
+      Redka.Context.Core
+      Redka.Engine.Core
       Redka.Import
       Redka.Run
       Redka.Server.Core
