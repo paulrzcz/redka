@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Redka.Server.Core (
-    server
+    MessageReceiver
+  , server
+  , forkRIO
 )
 where
 
@@ -9,14 +11,16 @@ import Network.Socket
 import Network.Socket.ByteString
 import Control.Concurrent (forkIO)
 
-server :: PortNumber -> RIO App ()
-server port = do
+type MessageReceiver = Socket -> IO ()
+
+server :: HostAddress -> PortNumber -> RIO App ()
+server host port = do
   logInfo $ "Starting server on port " <> display (toInteger port)
   bracket
     (liftIO $ socket AF_INET Stream defaultProtocol)
     (liftIO . close)
     (\sock -> do
-        liftIO $ bind sock (SockAddrInet port 0x0) -- TODO: move to configuration
+        liftIO $ bind sock (SockAddrInet port host) -- TODO: move to configuration
         liftIO $ listen sock 2
         forever $ do
           (conn, _) <- liftIO $ accept sock

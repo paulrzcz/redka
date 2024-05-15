@@ -37,9 +37,14 @@ main = do
                  <> short 'v'
                  <> help "Verbose output?"
                   )
-       <*> switch ( long "server"
-                 <> short 's'
-                 <> help "Server mode")
+       <*> switch ( long "maintenance"
+                 <> short 'm'
+                 <> help "Maintenance mode")
+       <*> strOption (long "bind-address"
+                    <> short 'b'
+                    <> value "localhost"
+                    <> help "Bind address"
+                    )
        <*> strOption ( long "port"
                  <> short 'p'
                  <> value "6379"

@@ -10,7 +10,8 @@ import RIO.Process ( HasProcessContext(..), ProcessContext )
 -- | Command line arguments
 data Options = Options
   { optionsVerbose :: !Bool
-  , optionsServer  :: !Bool
+  , optionsMaintenance  :: !Bool
+  , optionsAddress :: !String
   , optionsPort    :: !String
   }
 
