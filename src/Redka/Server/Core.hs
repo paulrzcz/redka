@@ -11,6 +11,7 @@ import Network.Socket
 import Network.Socket.ByteString
 import Control.Concurrent (forkIO)
 import qualified Data.ByteString  as B
+import Redka.Engine.Core (processMsg)
 
 type MessageReceiver = Socket -> IO ()
 
@@ -35,7 +36,8 @@ handleConnection conn = do
   msg <- liftIO $ recv conn 8192
   unless (B.null msg) $ do
     logInfo $ "Received: " <> displayBytesUtf8 msg
-    liftIO $ sendAll conn msg
+    resp <- processMsg msg
+    liftIO $ sendAll conn resp
     logInfo "Sent back"
     handleConnection conn
 
