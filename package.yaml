@@ -25,6 +25,9 @@ dependencies:
 - redis-resp >= 1.0.0
 - network
 - bytestring
+- stm
+- stm-hamt
+- stm-containers
 
 ghc-options:
 - -Wall
