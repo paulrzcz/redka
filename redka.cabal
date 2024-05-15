@@ -29,7 +29,6 @@ library
       Redka.Data.Command
       Redka.Data.Response
       Redka.Data.Rexp
-      Redka.Data.Types
       Redka.Engine.Core
       Redka.Import
       Redka.Run

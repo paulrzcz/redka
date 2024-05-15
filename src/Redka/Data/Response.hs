@@ -1,11 +1,16 @@
-{-#LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Redka.Data.Response (
-    encodeResp
+    RespResponse(..)
+,   encodeResp
 ) where
 
-import Redka.Data.Types
+import Redka.Import 
 import Redka.Data.Rexp
-import Redka.Import (ByteString)
+
+data RespResponse =
+    RespPush !ByteString ![RespExpr] | RespReply !RespExpr
+    deriving (Show, Eq, Ord, Generic)
 
 encodeResp :: [RespResponse] -> ByteString
 encodeResp = foldMap (\resp -> encodeReply resp <> crlf)
@@ -13,8 +18,3 @@ encodeResp = foldMap (\resp -> encodeReply resp <> crlf)
 encodeReply :: RespResponse -> ByteString
 encodeReply (RespReply rexp) = encodeRexp rexp
 encodeReply _ = "-NotImplementedResponse"
-
-encodeRexp :: RespExpr -> ByteString
-encodeRexp (RespString s) = "+" <> s
-encodeRexp (RespStringError s) = "-" <> s
-encodeRexp _ = "-NotImplemented"

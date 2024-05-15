@@ -3,6 +3,7 @@
 module Redka.Data.Rexp (
     RespExpr(..)
 ,   crlf
+,   encodeRexp
 ) where
 
 import Redka.Import
@@ -27,3 +28,8 @@ data RespExpr
 
 crlf :: ByteString
 crlf = "\r\n"
+
+encodeRexp :: RespExpr -> ByteString
+encodeRexp (RespString s) = "+" <> s
+encodeRexp (RespStringError s) = "-" <> s
+encodeRexp _ = "-NotImplemented"

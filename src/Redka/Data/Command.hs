@@ -1,17 +1,20 @@
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Redka.Data.Command (
-    parseCmd
+    RespCommand(..)
+,   parseCmd
 ) where
 
 import Redka.Import
-import Redka.Data.Types (RespCommand, RespResponse)
+import Redka.Data.Response
 
-import qualified Data.Attoparsec.ByteString as P
-import Data.Attoparsec (Parser)
+data RespCommand
+    = CmdGet !ByteString
+    | CmdSet !ByteString !ByteString
+    deriving (Show, Eq, Ord, Generic)
 
 parseCmd :: ByteString -> Either RespResponse [RespCommand]
 parseCmd = undefined
 
 --- Parser
 
-cmdParser :: Parser RespCommand
-cmdParser = undefined
