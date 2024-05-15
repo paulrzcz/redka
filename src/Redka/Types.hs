@@ -4,7 +4,7 @@ module Redka.Types
   , Options (..)
   ) where
 
-import RIO ( String, Bool, lens, HasLogFunc(..), LogFunc )
+import RIO 
 import RIO.Process ( HasProcessContext(..), ProcessContext )
 
 -- | Command line arguments

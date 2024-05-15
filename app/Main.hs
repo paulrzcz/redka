@@ -3,17 +3,6 @@
 module Main (main) where
 
 import Redka.Import
-    ( ($),
-      Semigroup((<>)),
-      IO,
-      (<$>),
-      (<*>),
-      stderr,
-      logOptionsHandle,
-      withLogFunc,
-      runRIO,
-      App(App, appOptions, appLogFunc, appProcessContext),
-      Options(Options, optionsVerbose) )
 import Redka.Run ( run )
 import RIO.Process ( mkDefaultProcessContext )
 import Options.Applicative.Simple

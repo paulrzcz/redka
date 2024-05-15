@@ -13,14 +13,15 @@ import Control.Concurrent (forkIO)
 
 type MessageReceiver = Socket -> IO ()
 
-server :: HostAddress -> PortNumber -> RIO App ()
-server host port = do
-  logInfo $ "Starting server on port " <> display (toInteger port)
+server :: Maybe String -> String -> RIO App ()
+server shost sport = do
+  addrInfo <- liftIO $ resolve Stream shost sport [AI_ADDRCONFIG]
+  logInfo $ "Starting server on port " <> displayShow addrInfo
   bracket
     (liftIO $ socket AF_INET Stream defaultProtocol)
     (liftIO . close)
     (\sock -> do
-        liftIO $ bind sock (SockAddrInet port host) -- TODO: move to configuration
+        liftIO $ bind sock $ addrAddress addrInfo -- TODO: move to configuration
         liftIO $ listen sock 2
         forever $ do
           (conn, _) <- liftIO $ accept sock
@@ -34,6 +35,21 @@ handleConnection conn = do
   logInfo $ "Received: " <> displayBytesUtf8 msg
   liftIO $ sendAll conn msg
   logInfo "Sent back"
+
+resolve
+    :: SocketType
+    -> Maybe String
+    -> String
+    -> [AddrInfoFlag]
+    -> IO AddrInfo
+resolve socketType mhost port flags =
+    head <$> getAddrInfo (Just hints) mhost (Just port)
+  where
+    hints =
+        defaultHints
+            { addrSocketType = socketType
+            , addrFlags = flags
+            }
 
 forkRIO :: RIO App () -> RIO App ThreadId
 forkRIO action = do
