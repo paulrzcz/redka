@@ -49,6 +49,7 @@ resolve socketType mhost port flags =
         defaultHints
             { addrSocketType = socketType
             , addrFlags = flags
+            , addrFamily = AF_INET
             }
 
 forkRIO :: RIO App () -> RIO App ThreadId
