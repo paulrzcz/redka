@@ -24,6 +24,7 @@ dependencies:
 - rio >= 0.1.12.0
 - network
 - bytestring
+- utf8-string
 - stm
 - stm-hamt
 - stm-containers
