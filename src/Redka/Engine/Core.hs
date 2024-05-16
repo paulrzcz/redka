@@ -5,9 +5,8 @@ module Redka.Engine.Core (
 where
 
 import Redka.Import
-import Redka.Data.Command
-import Redka.Data.Response
-import Redka.Data.Rexp
+import Redka.Data
+
 import qualified Redka.Context.Core as C
 
 processMsg :: ByteString -> RIO App ByteString

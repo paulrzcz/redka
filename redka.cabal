@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Redka.Context.Core
+      Redka.Data
       Redka.Data.Command
       Redka.Data.Response
       Redka.Data.Rexp

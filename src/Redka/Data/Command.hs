@@ -18,6 +18,8 @@ import Data.Attoparsec.ByteString.Char8 (takeTill, skipSpace, endOfLine, isEndOf
 data RespCommand
     = CmdGet !ByteString
     | CmdSet !ByteString !ByteString
+    | CmdIncr !ByteString
+    | CmdDecr !ByteString
     deriving (Show, Eq, Ord, Generic)
 
 parseCmd :: ByteString -> Either RespResponse [RespCommand]
