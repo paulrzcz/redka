@@ -6,7 +6,9 @@ module Redka.Context.Core (
     new,
     newIO,
     set,
-    get
+    get,
+    decr,
+    incr
 )
 where
 
@@ -53,6 +55,37 @@ get :: EngineContext -> ByteString -> STM RedkaType
 get ctx key = do
     value <- M.lookup key (storage ctx)
     return $ fromMaybe Nil value
+
+lookupIntOrZero :: EngineContext -> ByteString -> STM (Maybe Int64)
+lookupIntOrZero ctx key = do
+    value <- M.lookup key (storage ctx)
+    return $ getOrDie value
+    where
+        getOrDie Nothing = Just 0
+        getOrDie (Just (InInteger t)) = Just t
+        getOrDie _ = Nothing
+
+decr :: EngineContext -> ByteString -> STM (Maybe RedkaType)
+decr ctx key = do
+    value <- lookupIntOrZero ctx key
+    decrIfInt value
+    where
+        decrIfInt Nothing = return Nothing
+        decrIfInt (Just t) = do
+            let newValue = InInteger (t-1)
+            M.insert newValue key (storage ctx)
+            return (Just newValue)
+
+incr :: EngineContext -> ByteString -> STM (Maybe RedkaType)
+incr ctx key = do
+    value <- lookupIntOrZero ctx key
+    decrIfInt value
+    where
+        decrIfInt Nothing = return Nothing
+        decrIfInt (Just t) = do
+            let newValue = InInteger (t+1)
+            M.insert newValue key (storage ctx)
+            return (Just newValue)
 
 toInt64 :: ByteString -> Maybe Int64
 toInt64 v = fromIntegral . fst <$> C.readInt v

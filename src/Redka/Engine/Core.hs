@@ -26,6 +26,12 @@ processEitherCmds (Right cmds) = do
 okResp :: RespResponse
 okResp = RespReply (RespString "OK")
 
+wrongTypeResp :: RespResponse
+wrongTypeResp = RespReply (RespStringError "WRONGTYPE")
+
+notImpl :: RespResponse
+notImpl = RespReply (RespStringError "NOTIMPL")
+
 runCmd :: C.EngineContext -> RespCommand -> STM RespResponse
 runCmd ctx (CmdGet key) = do
     v <- C.get ctx key
@@ -39,5 +45,19 @@ runCmd ctx (CmdGet key) = do
 runCmd ctx (CmdSet key value) = do
     C.set ctx key value 
     return okResp
-    
+
+runCmd ctx (CmdDecr key) = do
+    v <- C.decr ctx key
+    return $ mkResp v 
+    where
+        mkResp (Just (C.InInteger t)) = RespReply (RespInteger t)
+        mkResp _ = wrongTypeResp
+
+runCmd ctx (CmdIncr key) = do
+    v <- C.incr ctx key
+    return $ mkResp v 
+    where
+        mkResp (Just (C.InInteger t)) = RespReply (RespInteger t)
+        mkResp _ = wrongTypeResp
+
 runCmd _ _ = return $ RespReply (RespStringError "cmd not implemented")

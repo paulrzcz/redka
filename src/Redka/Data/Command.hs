@@ -36,7 +36,7 @@ pipelineParser = many cmdParser
 
 cmdParser :: Parser RespCommand
 cmdParser = do
-    cmd <- cmdGetParser <|> cmdSetParser
+    cmd <- cmdGetParser <|> cmdSetParser <|> cmdDecrParser <|> cmdIncrParser
     endOfLine
     return cmd
 
@@ -55,3 +55,17 @@ cmdSetParser = do
     skipSpace
     val <- DAB.takeTill isEndOfLine
     return $ CmdSet key val
+
+cmdIncrParser :: Parser RespCommand
+cmdIncrParser = do
+    _ <- string "INCR"
+    skipSpace
+    key <- DAB.takeTill isEndOfLine
+    return $ CmdIncr key
+
+cmdDecrParser :: Parser RespCommand
+cmdDecrParser = do
+    _ <- string "DECR"
+    skipSpace
+    key <- DAB.takeTill isEndOfLine
+    return $ CmdDecr key
