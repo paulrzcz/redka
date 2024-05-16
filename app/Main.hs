@@ -4,6 +4,7 @@ module Main (main) where
 
 import Redka.Import
 import Redka.Run ( run )
+import Redka.Context.Core (newIO)
 import RIO.Process ( mkDefaultProcessContext )
 import Options.Applicative.Simple
     ( Alternative(empty),
@@ -43,10 +44,12 @@ main = do
     empty
   lo <- logOptionsHandle stderr (optionsVerbose options)
   pc <- mkDefaultProcessContext
+  engineCtx <- newIO
   withLogFunc lo $ \lf ->
     let app = App
           { appLogFunc = lf
           , appProcessContext = pc
           , appOptions = options
+          , appEngineContext = engineCtx
           }
      in runRIO app run

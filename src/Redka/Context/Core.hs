@@ -3,12 +3,13 @@ module Redka.Context.Core (
     EngineContext,
     RedkaType(..),
     new,
+    newIO,
     set,
     get
 )
 where
 
-import Redka.Import
+import RIO
     ( Int64, MonadIO(liftIO), ByteString, RIO, fromMaybe, STM )
 
 import qualified Data.ByteString.Char8 as C
@@ -27,10 +28,12 @@ newtype EngineContext = EngineContext {
 }
 
 new :: RIO m EngineContext
-new = do
-    liftIO $ do
-        smap <- M.newIO :: IO (M.Map ByteString RedkaType)
-        return $ EngineContext smap
+new = liftIO newIO
+
+newIO :: IO EngineContext
+newIO = do
+    smap <- M.newIO :: IO (M.Map ByteString RedkaType)
+    return $ EngineContext smap
 
 set :: EngineContext -> ByteString -> ByteString -> STM ()
 set ctx key value = do 

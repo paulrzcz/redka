@@ -6,6 +6,7 @@ module Redka.Types
 
 import RIO 
 import RIO.Process ( HasProcessContext(..), ProcessContext )
+import Redka.Context.Core (EngineContext)
 
 -- | Command line arguments
 data Options = Options
@@ -20,6 +21,7 @@ data App = App
   , appProcessContext :: !ProcessContext
   , appOptions :: !Options
   -- Add other app-specific configuration information here
+  , appEngineContext :: !EngineContext
   }
 
 instance HasLogFunc App where
