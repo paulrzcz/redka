@@ -9,8 +9,9 @@ module Redka.Context.Core (
 where
 
 import Redka.Import
-    ( Int64, Word8, MonadIO(liftIO), ByteString, RIO, fromMaybe, STM )
-import qualified Data.ByteString as B
+    ( Int64, MonadIO(liftIO), ByteString, RIO, fromMaybe, STM )
+
+import qualified Data.ByteString.Char8 as C
 import qualified StmContainers.Map as M
 import qualified StmContainers.Set as S
 
@@ -33,7 +34,8 @@ new = do
 
 set :: EngineContext -> ByteString -> ByteString -> STM ()
 set ctx key value = do 
-    let internalValue = if isStringNumber value then InString value else InInteger (toInt64 value)
+    let maybeInt = toInt64 value
+    let internalValue = toInternalValue value maybeInt
     M.insert internalValue key (storage ctx)
 
 get :: EngineContext -> ByteString -> STM RedkaType
@@ -41,11 +43,9 @@ get ctx key = do
     value <- M.lookup key (storage ctx)
     return $ fromMaybe Nil value
 
-isWord8Number :: Word8 -> Bool
-isWord8Number = undefined
+toInt64 :: ByteString -> Maybe Int64
+toInt64 v = fromIntegral . fst <$> C.readInt v
 
-isStringNumber :: ByteString -> Bool
-isStringNumber = B.all isWord8Number
-
-toInt64 :: ByteString -> Int64
-toInt64 = undefined
+toInternalValue :: ByteString -> Maybe Int64 -> RedkaType
+toInternalValue value Nothing = InString value
+toInternalValue _ (Just value) = InInteger value
