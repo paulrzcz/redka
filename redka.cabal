@@ -54,7 +54,7 @@ library
     , utf8-string
   default-language: Haskell2010
 
-executable redka-exe
+executable redka-server
   main-is: Main.hs
   other-modules:
       Paths_redka
