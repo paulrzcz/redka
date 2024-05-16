@@ -7,7 +7,7 @@ where
 import Redka.Import
 import Redka.Data.Command
 import Redka.Data.Response
-import Redka.Data.Rexp (RespExpr(RespStringError, RespString))
+import Redka.Data.Rexp
 import qualified Redka.Context.Core as C
 
 processMsg :: ByteString -> RIO App ByteString
@@ -30,7 +30,12 @@ okResp = RespReply (RespString "OK")
 runCmd :: C.EngineContext -> RespCommand -> STM RespResponse
 runCmd ctx (CmdGet key) = do
     v <- C.get ctx key
-    return okResp
+    return $ RespReply $ toResp v
+    where
+        toResp C.Nil = RespString "nil"
+        toResp (C.InString v) = RespString v
+        toResp (C.InInteger t) = RespInteger t
+        toResp _ = RespStringError "not implemented"
 
 runCmd ctx (CmdSet key value) = do
     C.set ctx key value 
