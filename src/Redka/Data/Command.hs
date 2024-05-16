@@ -5,9 +5,9 @@ module Redka.Data.Command (
 ,   parseCmd
 ) where
 
-import Redka.Import
+import RIO
 import Redka.Data.Response
-import Redka.Data.Rexp (crlf, RespExpr (RespStringError))
+import Redka.Data.Rexp (RespExpr (RespStringError))
 
 import qualified Data.ByteString.UTF8 as BSU
 
@@ -26,13 +26,6 @@ parseCmd cmds = eitherToEither $ parseOnly (pipelineParser <* endOfInput) cmds
 eitherToEither :: Either String [RespCommand] -> Either RespResponse [RespCommand]
 eitherToEither (Left s) = Left $ RespReply (RespStringError ("unable to parse: " <> BSU.fromString s))
 eitherToEither (Right cmds) = Right cmds
-
-resultToEither :: Result [RespCommand] -> Either RespResponse [RespCommand]
-resultToEither (Done _ r) = Right r
-resultToEither f = Left $ RespReply (RespStringError ("unable to parse: " <> BSU.fromString (show f)))
-
-notImplemented :: ByteString -> Either RespResponse [RespCommand]
-notImplemented s = Left $ RespReply (RespStringError ("NotImplemented " <> s))
 
 --- Parser
 

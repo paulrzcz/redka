@@ -5,7 +5,7 @@ module Redka.Data.Response (
 ,   encodeResp
 ) where
 
-import Redka.Import 
+import RIO
 import Redka.Data.Rexp
 
 data RespResponse =

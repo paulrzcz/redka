@@ -25,6 +25,7 @@ dependencies:
 - network
 - bytestring
 - utf8-string
+- bytestring-conversion
 - stm
 - stm-hamt
 - stm-containers

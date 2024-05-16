@@ -45,6 +45,7 @@ library
       attoparsec >=0.11
     , base >=4.11 && <10
     , bytestring
+    , bytestring-conversion
     , network
     , rio >=0.1.12.0
     , stm
@@ -66,6 +67,7 @@ executable redka-exe
       attoparsec >=0.11
     , base >=4.11 && <10
     , bytestring
+    , bytestring-conversion
     , network
     , optparse-simple
     , redka
@@ -91,6 +93,7 @@ test-suite redka-test
       attoparsec >=0.11
     , base >=4.11 && <10
     , bytestring
+    , bytestring-conversion
     , hspec
     , network
     , redka

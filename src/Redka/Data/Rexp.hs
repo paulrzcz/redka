@@ -6,7 +6,7 @@ module Redka.Data.Rexp (
 ,   encodeRexp
 ) where
 
-import Redka.Import
+import RIO
 import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString.Builder as B
 
