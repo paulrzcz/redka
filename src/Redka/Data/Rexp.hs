@@ -48,9 +48,14 @@ encodeRexp (RespBulkStringError False s) = "!" <> toByteString' (B.length s) <> 
 encodeRexp (RespInteger v) = ":" <> toByteString' v
 encodeRexp RespNull = encodeRexp (RespString "nil")
 encodeRexp (RespBool v) = "#" <> if v then "t" else "f"
-encodeRexp (RespArray exprs) = "*" <> toByteString' (length exprs) <> crlf <> foldMap (\expr -> encodeRexp expr <> crlf) exprs
+encodeRexp (RespArray exprs) = "*" <> toByteString' (length exprs) <> crlf <> (concatCrLf . map encodeRexp) exprs
 encodeRexp RespNullArray = "*-1"
 encodeRexp _ = "-NotImplementedRexp"
+
+concatCrLf :: [ByteString] -> ByteString
+concatCrLf [] = ""
+concatCrLf [x] = x
+concatCrLf (x:xs) = x <> crlf <> concatCrLf xs
 
 parseRexp :: Parser RespExpr
 parseRexp = 

@@ -13,8 +13,9 @@ data RespResponse =
     deriving (Show, Eq, Ord, Generic)
 
 encodeResp :: [RespResponse] -> ByteString
-encodeResp [x] = encodeReply x <> crlf
-encodeResp xs = encodeReply $ RespReply $ RespArray $ map desugar xs
+encodeResp = foldMap (\x -> encodeReply x <> crlf)
+-- encodeResp [x] = encodeReply x <> crlf
+-- encodeResp xs = encodeReply $ RespReply $ RespArray $ map desugar xs
 
 desugar :: RespResponse -> RespExpr
 desugar (RespReply x) = x 
