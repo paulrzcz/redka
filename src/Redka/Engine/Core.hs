@@ -39,8 +39,8 @@ runCmd ctx (CmdGet key) = do
     v <- C.get ctx key
     return $ RespReply $ toResp v
     where
-        toResp C.Nil = RespString "nil"
-        toResp (C.InString v) = RespString v
+        toResp C.Nil = RespBulkString True ""
+        toResp (C.InString v) = RespBulkString False v
         toResp (C.InInteger t) = RespInteger t
         toResp _ = RespStringError "not implemented"
 

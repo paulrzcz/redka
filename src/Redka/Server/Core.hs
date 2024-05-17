@@ -12,7 +12,6 @@ import Network.Socket.ByteString
 import Control.Concurrent (forkIO)
 import qualified Data.ByteString  as B
 import Redka.Engine.Core (processMsg)
-import Redka.Data.Rexp (crlf)
 
 type MessageReceiver = Socket -> IO ()
 
@@ -35,7 +34,7 @@ server shost sport = do
 handleConnection :: Socket -> RIO App ()
 handleConnection conn = do
   msg <- liftIO $ recv conn 8192
-  unless (B.null msg || msg == crlf) $ do
+  unless (B.null msg) $ do
     logInfo $ "Received: " <> displayBytesUtf8 msg
     resp <- processMsg msg
     liftIO $ sendAll conn resp
