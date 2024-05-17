@@ -24,7 +24,7 @@ server shost sport = do
     (liftIO . close)
     (\sock -> do
         liftIO $ bind sock $ addrAddress addrInfo -- TODO: move to configuration
-        liftIO $ listen sock 2
+        liftIO $ listen sock 1024
         forever $ do
           (conn, _) <- liftIO $ accept sock
           logInfo $ "Accepted connection from: " <> displayShow conn
@@ -35,12 +35,12 @@ handleConnection :: Socket -> RIO App ()
 handleConnection conn = do
   msg <- liftIO $ recv conn 8192
   unless (B.null msg) $ do
-    logInfo $ "Received: " <> displayBytesUtf8 msg
+    logDebug $ "Received: " <> displayBytesUtf8 msg
     resp <- processMsg msg
     liftIO $ sendAll conn resp
-    logInfo "Sent back"
+    logDebug "Sent back"
     handleConnection conn
-  logInfo $ "Closing connection from: " <> displayShow conn
+  logDebug $ "Closing connection from: " <> displayShow conn
 
 resolve
     :: SocketType
