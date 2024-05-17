@@ -7,14 +7,14 @@ module Redka.Data.Rexp (
 ) where
 
 import RIO
-import qualified Data.ByteString.Lazy as L
-import qualified Data.ByteString.Builder as B
+import Data.ByteString.Conversion
+import qualified Data.ByteString as B
 
 data RespExpr
   = RespString !ByteString
-  | RespBlob !ByteString
+  | RespBulkString !Bool !ByteString
   | RespStringError !ByteString
-  | RespBlobError !ByteString
+  | RespBulkStringError !Bool !ByteString
   | RespArray ![RespExpr]
   | RespInteger !Int64
   | RespNull
@@ -31,11 +31,15 @@ data RespExpr
 crlf :: ByteString
 crlf = "\r\n"
 
-
 encodeRexp :: RespExpr -> ByteString
 encodeRexp (RespString s) = "+" <> s
+encodeRexp (RespBulkString True _) = "$-1"
+encodeRexp (RespBulkString False s) = "$" <> toByteString' (B.length s) <> crlf <> s
 encodeRexp (RespStringError s) = "-" <> s
-encodeRexp (RespInteger v) = ":" <> (L.toStrict . B.toLazyByteString . B.int64Dec) v
+encodeRexp (RespBulkStringError True _) = "!-1"
+encodeRexp (RespBulkStringError False s) = "!" <> toByteString' (B.length s) <> crlf <> s
+encodeRexp (RespInteger v) = ":" <> toByteString' v
 encodeRexp RespNull = encodeRexp (RespString "nil")
 encodeRexp (RespBool v) = "#" <> if v then "t" else "f"
+encodeRexp (RespArray exprs) = "*" <> toByteString' (length exprs) <> crlf <> foldMap (\expr -> encodeRexp expr <> crlf) exprs 
 encodeRexp _ = "-NotImplementedRexp"
