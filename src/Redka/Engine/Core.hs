@@ -31,9 +31,6 @@ okResp = RespReply (RespString "OK")
 wrongTypeResp :: RespResponse
 wrongTypeResp = RespReply (RespStringError "WRONGTYPE")
 
-notImpl :: RespResponse
-notImpl = RespReply (RespStringError "NOTIMPL")
-
 runCmd :: C.EngineContext -> RespCommand -> STM RespResponse
 runCmd ctx (CmdGet key) = do
     v <- C.get ctx key
