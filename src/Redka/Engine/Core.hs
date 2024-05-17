@@ -12,7 +12,9 @@ import qualified Redka.Context.Core as C
 processMsg :: ByteString -> RIO App ByteString
 processMsg msg = do
     let cmds = parseCmd msg
+    logInfo $ displayShow cmds
     resp <- processEitherCmds cmds
+    logInfo $ displayShow resp
     return $ encodeResp resp
 
 processEitherCmds :: Either RespResponse [RespCommand] -> RIO App [RespResponse]
@@ -59,5 +61,11 @@ runCmd ctx (CmdIncr key) = do
     where
         mkResp (Just (C.InInteger t)) = RespReply (RespInteger t)
         mkResp _ = wrongTypeResp
+
+runCmd _ (CmdConfigGet "save") = do
+    return $ RespReply (RespArray [RespBulkString False "save", RespBulkString False ""])
+
+runCmd _ (CmdConfigGet "appendonly") = do
+    return $ RespReply (RespArray [RespBulkString False "appendonly", RespBulkString False "no"])
 
 runCmd _ _ = return $ RespReply (RespStringError "cmd not implemented")

@@ -5,6 +5,7 @@ module Redka.Data.Rexp (
 ,   crlf
 ,   encodeRexp
 ,   parseRexp
+,   parseArray
 ) where
 
 import RIO
@@ -13,7 +14,7 @@ import qualified Data.ByteString as B
 
 import Data.Attoparsec.ByteString hiding (takeTill)
 import qualified Data.Attoparsec.ByteString as DAB
-import Data.Attoparsec.ByteString.Char8 (takeTill, skipSpace, endOfLine, isEndOfLine, char, signed, decimal)
+import Data.Attoparsec.ByteString.Char8 (endOfLine, isEndOfLine, char, signed, decimal)
 
 data RespExpr
   = RespString !ByteString
@@ -69,12 +70,12 @@ parseString = do
 parseArray :: Parser RespExpr
 parseArray = do
   _ <- char '*'
-  len <- signed decimal :: Parser Int64
+  len <- signed decimal :: Parser Int
+  endOfLine
   case len of
     -1 -> return RespNullArray
     _  -> do
-      elems <- many parseRexp
-      endOfLine
+      elems <- count len parseRexp
       return $ RespArray elems
 
 parseBulkString :: Parser RespExpr
@@ -86,6 +87,7 @@ parseBulkString = do
     -1 -> return $ RespBulkString True ""
     _  -> do
       s <- DAB.take len
+      endOfLine
       return $ RespBulkString False s 
 
 parseInteger :: Parser RespExpr
