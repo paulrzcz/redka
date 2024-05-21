@@ -21,7 +21,9 @@ server shost sport = do
   logInfo $ "Starting server on port " <> displayShow addrInfo
   bracket
     (liftIO $ socket AF_INET Stream defaultProtocol)
-    (liftIO . close)
+    (\sock -> do
+      logInfo $ "Closing connection from: " <> displayShow sock
+      liftIO $ close sock)
     (\sock -> do
         liftIO $ bind sock $ addrAddress addrInfo -- TODO: move to configuration
         liftIO $ listen sock 1024
@@ -35,12 +37,11 @@ handleConnection :: Socket -> RIO App ()
 handleConnection conn = do
   msg <- liftIO $ recv conn 8192
   unless (B.null msg) $ do
-    logDebug $ "Received: " <> displayBytesUtf8 msg
+    -- logDebug $ "Received: " <> displayBytesUtf8 msg
     resp <- processMsg msg
     liftIO $ sendAll conn resp
-    logDebug "Sent back"
+    -- logDebug "Sent back"
     handleConnection conn
-  logDebug $ "Closing connection from: " <> displayShow conn
 
 resolve
     :: SocketType
