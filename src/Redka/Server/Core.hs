@@ -40,7 +40,7 @@ handleConnection conn = do
     logInfo $ "Received: " <> displayBytesUtf8 msg
     resp <- processMsg msg
     liftIO $ sendAll conn resp
-    -- logDebug "Sent back"
+    logInfo $ "Sent back: " <> displayBytesUtf8 resp
     handleConnection conn
 
 resolve

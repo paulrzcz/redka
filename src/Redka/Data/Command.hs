@@ -21,10 +21,11 @@ data RespCommand
     | CmdIncr !ByteString
     | CmdDecr !ByteString
     | CmdConfigGet !ByteString
+    | CmdCommand !ByteString
     deriving (Show, Eq, Ord, Generic)
 
 parseCmd :: ByteString -> Either RespResponse [RespCommand]
-parseCmd cmds = eitherToEither $ parseOnly (pipelineParser <* endOfInput) cmds
+parseCmd cmds = eitherToEither $ parseOnly (pipelineParser <* (endOfInput <?> "fuck")) cmds
 
 eitherToEither :: Either String [RespCommand] -> Either RespResponse [RespCommand]
 eitherToEither (Left s) = Left $ RespReply (RespStringError ("unable to parse: " <> BSU.fromString s))
@@ -53,7 +54,8 @@ cmdArrayParser = do
         (RespArray [RespBulkString False "INCR", RespBulkString False k]) -> return $ CmdIncr k
         (RespArray [RespBulkString False "DECR", RespBulkString False k]) -> return $ CmdDecr k
         (RespArray [RespBulkString False "CONFIG", RespBulkString False "GET", RespBulkString False k]) -> return $ CmdConfigGet k
-        (RespArray [RespBulkString False "COMMAND", RespBulkString False "DOCS"]) -> return $ CmdConfigGet "DOCS"
+        (RespArray [RespBulkString False "COMMAND"]) -> return $ CmdCommand "emptyCmd"
+        (RespArray [RespBulkString False "COMMAND", RespBulkString False x]) -> return $ CmdCommand x
         _ -> undefined
 
 cmdGetParser :: Parser RespCommand
