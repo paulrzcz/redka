@@ -25,6 +25,7 @@ import qualified Data.Text.Encoding as T
 import qualified Data.Text.Read as T
 
 import Control.Monad (replicateM)
+import qualified Scanner.Attoparsec as SA
 
 data RespExpr
   = RespString !ByteString
@@ -68,12 +69,12 @@ concatCrLf [x] = x
 concatCrLf (x:xs) = x <> crlf <> concatCrLf xs
 
 parseRexp :: Parser RespExpr
-parseRexp = 
-  parseArray <|> 
-  parseBulkString <|> 
-  parseInteger <|> 
-  parseBool <|> 
-  parseString
+parseRexp = SA.toAtto scannerRexp
+  -- parseArray <|> 
+  -- parseBulkString <|> 
+  -- parseInteger <|> 
+  -- parseBool <|> 
+  -- parseString
 
 scannerRexp :: Scanner RespExpr
 scannerRexp = do
@@ -88,9 +89,9 @@ scannerRexp = do
     _   -> fail "Unknown REXP type"
 
 scannerBool :: Scanner RespExpr
-scannerBool = do
+scannerBool = RespBool <$> do
   c <- S.anyChar8
-  return $ RespBool (c == 't')
+  (c == 't') <$ eol
 
 scannerArray :: Scanner RespExpr
 scannerArray = do
@@ -139,15 +140,16 @@ parseString = do
   return $ RespString value
 
 parseArray :: Parser RespExpr
-parseArray = do
-  _ <- char '*'
-  len <- signed decimal :: Parser Int
-  endOfLine
-  case len of
-    -1 -> return RespNullArray
-    _  -> do
-      elems <- count len parseRexp
-      return $ RespArray elems
+parseArray = SA.toAtto scannerArray
+  -- do
+  -- _ <- char '*'
+  -- len <- signed decimal :: Parser Int
+  -- endOfLine
+  -- case len of
+  --   -1 -> return RespNullArray
+  --   _  -> do
+  --     elems <- count len parseRexp
+  --     return $ RespArray elems
 
 parseBulkString :: Parser RespExpr
 parseBulkString = do

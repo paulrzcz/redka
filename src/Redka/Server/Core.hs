@@ -37,7 +37,7 @@ handleConnection :: Socket -> RIO App ()
 handleConnection conn = do
   msg <- liftIO $ recv conn 8192
   unless (B.null msg) $ do
-    -- logDebug $ "Received: " <> displayBytesUtf8 msg
+    logInfo $ "Received: " <> displayBytesUtf8 msg
     resp <- processMsg msg
     liftIO $ sendAll conn resp
     -- logDebug "Sent back"

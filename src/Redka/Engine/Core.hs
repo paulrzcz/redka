@@ -12,9 +12,9 @@ import qualified Redka.Context.Core as C
 processMsg :: ByteString -> RIO App ByteString
 processMsg msg = do
     let cmds = parseCmd msg
-    -- logDebug $ displayShow cmds
+    logInfo $ displayShow cmds
     resp <- processEitherCmds cmds
-    -- logDebug $ displayShow resp
+    logInfo $ displayShow resp
     return $ encodeResp resp
 
 processEitherCmds :: Either RespResponse [RespCommand] -> RIO App [RespResponse]

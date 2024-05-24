@@ -53,6 +53,7 @@ cmdArrayParser = do
         (RespArray [RespBulkString False "INCR", RespBulkString False k]) -> return $ CmdIncr k
         (RespArray [RespBulkString False "DECR", RespBulkString False k]) -> return $ CmdDecr k
         (RespArray [RespBulkString False "CONFIG", RespBulkString False "GET", RespBulkString False k]) -> return $ CmdConfigGet k
+        (RespArray [RespBulkString False "COMMAND", RespBulkString False "DOCS"]) -> return $ CmdConfigGet "DOCS"
         _ -> undefined
 
 cmdGetParser :: Parser RespCommand
