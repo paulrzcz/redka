@@ -6,6 +6,7 @@ module Redka.Data.Rexp (
 ,   encodeRexp
 ,   parseRexp
 ,   parseArray
+,   scannerRexp
 ) where
 
 import RIO
@@ -15,6 +16,15 @@ import qualified Data.ByteString as B
 import Data.Attoparsec.ByteString hiding (takeTill)
 import qualified Data.Attoparsec.ByteString as DAB
 import Data.Attoparsec.ByteString.Char8 (endOfLine, isEndOfLine, char, signed, decimal)
+
+import Scanner (Scanner)
+import qualified Scanner as S
+import qualified Scanner.Attoparsec as SA
+
+import qualified Data.Text.Encoding as T
+import qualified Data.Text.Read as T
+
+import Control.Monad (replicateM)
 
 data RespExpr
   = RespString !ByteString
@@ -64,6 +74,62 @@ parseRexp =
   parseInteger <|> 
   parseBool <|> 
   parseString
+
+scannerRexp :: Scanner RespExpr
+scannerRexp = do
+  c <- S.anyChar8
+  case c of
+    '*' -> scannerArray
+    '+' -> scannerString
+    '-' -> scannerError
+    ':' -> scannerInteger
+    '$' -> scannerBulkString
+    '#' -> scannerBool
+    _   -> fail "Unknown REXP type"
+
+scannerBool :: Scanner RespExpr
+scannerBool = do
+  c <- S.anyChar8
+  return $ RespBool (c == 't')
+
+scannerArray :: Scanner RespExpr
+scannerArray = do
+  len <- scannerIntegral
+  if len < 0 then
+    return RespNullArray
+  else
+    RespArray <$> replicateM len scannerRexp
+
+scannerString :: Scanner RespExpr
+scannerString = RespString <$> scannerLine
+
+scannerError :: Scanner RespExpr
+scannerError = RespStringError <$> scannerLine
+
+scannerInteger :: Scanner RespExpr
+scannerInteger = RespInteger <$> scannerIntegral
+
+scannerBulkString :: Scanner RespExpr
+scannerBulkString = do
+  len <- scannerIntegral
+  if len < 0
+    then return $ RespBulkString True ""
+    else RespBulkString False <$> S.take len <* eol
+
+scannerIntegral :: Integral i => Scanner i
+scannerIntegral = do
+  str <- scannerLine
+  case T.signed T.decimal (T.decodeUtf8 str) of
+    Left err -> fail (show err)
+    Right (l, _) -> return l
+
+scannerLine :: Scanner ByteString
+scannerLine = S.takeWhileChar8 (/= '\r') <* eol
+
+eol :: Scanner ()
+eol = do
+  S.char8 '\r'
+  S.char8 '\n'
 
 parseString :: Parser RespExpr
 parseString = do
