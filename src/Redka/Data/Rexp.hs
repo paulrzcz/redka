@@ -25,7 +25,6 @@ import qualified Data.Text.Encoding as T
 import qualified Data.Text.Read as T
 
 import Control.Monad (replicateM)
-import qualified Scanner.Attoparsec as SA
 
 data RespExpr
   = RespString !ByteString
